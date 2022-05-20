@@ -1,25 +1,36 @@
-import {useState} from 'react'
-import {Filter} from "./Filter";
-import {PhoneList} from "./PhoneList";
-import {FillingForm} from "./FillingForm";
+import {useEffect, useState} from 'react'
+import {Filter} from "./components/Filter";
+import {FillingForm} from "./components/FillingForm";
+import {PersonList} from "./components/PersonList";
+import personService from "./services/PersonService";
+import {StatusMessage} from "./components/StatusMessage";
 
 const App = () => {
-    const [persons, setPersons] = useState([
-        {name: 'Arto Hellas', number: '040-123456', id: 1},
-        {name: 'Ada Lovelace', number: '39-44-5323523', id: 2},
-        {name: 'Dan Abramov', number: '12-43-234345', id: 3},
-        {name: 'Mary Poppendieck', number: '39-23-6423122', id: 4}
-    ])
-    const [newName, setNewName] = useState('')
-    const [newNumber, setNewNumber] = useState('')
+    const [persons, setPersons] = useState([])
     const [filter, setFilter] = useState('')
+    const [statusMessage, setStatusMessage] = useState(null)
+    const [isError, setIsError] = useState(false)
+
+    useEffect(() => {
+        personService.getAll()
+            .then(personsFromDb => setPersons(personsFromDb))
+    },[])
+    const setStatus = (message) => {
+        setIsError(false)
+        setStatusMessage(message)
+    }
+    const setError = (message) => {
+        setIsError(true)
+        setStatusMessage(message)
+    }
 
     return (
         <div>
             <h1>Phonebook</h1>
+            <StatusMessage message={statusMessage} isError={isError} setMessage={setStatusMessage}/>
             <Filter filter={filter} setFilter={setFilter}/>
-            <FillingForm persons={persons} newName={newName} newNumber={newNumber} setNewName={setNewName} setNewNumber={setNewNumber} setPersons={setPersons}/>
-            <PhoneList persons={persons} filter={filter} />
+            <FillingForm setStatus={setStatus} setPersons={setPersons} persons={persons}/>
+            <PersonList setPersons={setPersons} persons={persons} setStatus={setStatus} setError={setError} filter={filter} />
         </div>
     )
 }

@@ -1,4 +1,10 @@
-export const FillingForm = ({newName, setNewName, newNumber, setNewNumber, persons, setPersons}) => {
+import person from "../services/PersonService";
+import {useState} from "react";
+
+export const FillingForm = ({persons, setPersons, setStatus}) => {
+    const [newName, setNewName] = useState('')
+    const [newNumber, setNewNumber] = useState('')
+
     const handeNameChange = (event) => {
         setNewName(event.target.value)
     }
@@ -9,18 +15,22 @@ export const FillingForm = ({newName, setNewName, newNumber, setNewNumber, perso
     const addRecord = (event) => {
         event.preventDefault()
         if (newName.length > 0 && newNumber.length > 0) {
-            if (!persons.some(e => e.name === newName)) {
-                const newPerson = {
-                    name: newName,
-                    number: newNumber,
-                    id: persons.length + 1
-                }
+            if (!persons.some(e => e.name === newName) || window.confirm(`${newName} is already added to phonebook. Do you want to replace number?`)) {
+                const newPerson = createNewPerson();
                 setPersons(() => (persons.concat(newPerson)))
-                setNewName('')
-                setNewNumber('')
-            } else {
-                alert(`${newName} is already added to phonebook`)
+                    person.create(newPerson)
             }
+            setStatus(`${newName} was added`)
+            setNewName('')
+            setNewNumber('')
+        }
+
+        function createNewPerson() {
+            return {
+                name: newName,
+                number: newNumber,
+                id: persons.length + 1
+            };
         }
     }
     return (
