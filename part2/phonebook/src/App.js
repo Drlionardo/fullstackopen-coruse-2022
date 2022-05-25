@@ -29,7 +29,7 @@ const App = () => {
             <h1>Phonebook</h1>
             <StatusMessage message={statusMessage} isError={isError} setMessage={setStatusMessage}/>
             <Filter filter={filter} setFilter={setFilter}/>
-            <FillingForm setStatus={setStatus} setPersons={setPersons} persons={persons}/>
+            <FillingForm setStatus={setStatus} setPersons={setPersons} persons={persons} setError={setError}/>
             <PersonList setPersons={setPersons} persons={persons} setStatus={setStatus} setError={setError} filter={filter} />
         </div>
     )

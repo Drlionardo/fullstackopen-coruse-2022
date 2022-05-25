@@ -1,7 +1,7 @@
 import person from "../services/PersonService";
 import {useState} from "react";
 
-export const FillingForm = ({persons, setPersons, setStatus}) => {
+export const FillingForm = ({persons, setPersons, setStatus, setError}) => {
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
 
@@ -19,8 +19,11 @@ export const FillingForm = ({persons, setPersons, setStatus}) => {
                 const newPerson = createNewPerson();
                 setPersons(() => (persons.concat(newPerson)))
                     person.create(newPerson)
+                        .then(r => setStatus(`${newName} was added`))
+                        .catch(e => {
+                            setError(e.response.data.error)
+                        })
             }
-            setStatus(`${newName} was added`)
             setNewName('')
             setNewNumber('')
         }
